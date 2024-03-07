@@ -4,8 +4,8 @@ import torch
 import pandas as pd
 
 
-model = Regressor(feature_size=4, hidden_size=[40], output_size=1, downscale=0, units=1, hidden_dim_nspt=4, out_feature_nspt=5).to(device)
-model.load_state_dict(torch.load('iteration_135_72.93/model_col_135_1.1257982410299585_4.806753039186598_5.094652572600723_72.93.pth'))
+model = Regressor(feature_size=4, hidden_size=[201], output_size=1, downscale=0, units=1, hidden_dim_nspt=3, out_feature_nspt=2).to(device)
+model.load_state_dict(torch.load('model_col_2_1.018_3.671_2.199_14.05.pth'))
 
 st.title("LSTM Axial Bor Qi Prediction")
 
