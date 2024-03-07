@@ -1,8 +1,11 @@
+import streamlit as st
 import torch
 import torch.nn as nn
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import base64
 
 class NSPTExtractor(nn.Module):
     def __init__(self, in_feature=3, hidden_dim=8, out_feature=16):
@@ -119,10 +122,10 @@ class Regressor(nn.Module):
             print("output vector: ", output)
         return output
     
-scaler_x = pickle.load(open("iteration_135_72.93/scaler_x_72.93.pkl", "rb"))
-scaler_nspt = pickle.load(open("iteration_135_72.93/scaler_nspt_72.93.pkl", "rb"))
-scaler_y = pickle.load(open("iteration_135_72.93/scaler_y_72.93.pkl", "rb"))
-le = pickle.load(open("iteration_135_72.93/scaler_label_encorder_72.93.pkl", "rb"))
+scaler_x = pickle.load(open("scaler_x_14.05.pkl", "rb"))
+scaler_nspt = pickle.load(open("scaler_nspt_14.05.pkl", "rb"))
+scaler_y = pickle.load(open("scaler_y_14.05.pkl", "rb"))
+le = pickle.load(open("scaler_label_encorder_14.05.pkl", "rb"))
 
 def generate_ei(n_ei):
     res = []
