@@ -7,7 +7,12 @@ import pandas as pd
 model = Regressor(feature_size=4, hidden_size=[201], output_size=1, downscale=0, units=1, hidden_dim_nspt=3, out_feature_nspt=2).to(device)
 model.load_state_dict(torch.load('model_col_2_1.018_3.671_2.199_14.05.pth'))
 
-st.title("LSTM Axial Bor Qi Prediction")
+st.title("Prediction of Load-settlement Curve of Pile Foundation using Deep Learning")
+#membuat subheader
+st.subheader("Thesis Project by: Anry Gratio Deo Warouw (25021069) Bandung Institute of Technology")
+st.markdown("Selamat datang semua :partying_face:, saya Deo mahasiswa S2 Geoteknik sedang mengembangkan model AI :smile: dengan tujuan agar dapat digunakan untuk memprediksi Load-Settlement Tiang Bor di DKI Jakarta :satisfied:")
+
+st.image('header.png')
 
 col1, col2 = st.columns(2)
 
