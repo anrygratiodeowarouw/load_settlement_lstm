@@ -3,6 +3,7 @@ from engine import Regressor, device, predict_qi, plot_prediction
 import torch
 import pandas as pd
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 model = Regressor(feature_size=4, hidden_size=[201], output_size=1, downscale=0, units=1, hidden_dim_nspt=3, out_feature_nspt=2).to(device)
 model.load_state_dict(torch.load('model_col_2_1.018_3.671_2.199_14.05.pth'))
