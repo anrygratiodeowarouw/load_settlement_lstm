@@ -135,21 +135,53 @@ def generate_ei(n_ei):
         res.append(current_value)
     return res
 
-def predict_qi(d, l, col, n_ei, nspt_df,model):
+def predict_qi(d, l, col, n_ei, nspt_df, model):
     ei = generate_ei(n_ei)
     nspt = nspt_df.values
 
     X = [[d, l, col, ei[i]] for i in range(len(ei))]
-    
-    nspt[:,2] = le.transform(nspt[:,2]).tolist()
+
+    try:
+        nspt[:, 2] = le.transform(nspt[:, 2]).tolist()
+    except ValueError as e:
+        st.error(f"Error in Label Encoding: {e}")
+        return None
+
     X_transformed = scaler_x.transform(X)
-    nspt_transformed = scaler_nspt.transform(np.array(nspt).reshape(-1,3))
+    nspt_transformed = scaler_nspt.transform(np.array(nspt).reshape(-1, 3))
+
     x = torch.tensor(X_transformed).float().to(device).unsqueeze(0)
     nspt = torch.tensor(nspt_transformed.reshape(3, -1)).float().to(device).unsqueeze(0)
-    y_pred = model(x, nspt).to(device)
-    y_pred = scaler_y.inverse_transform(y_pred.cpu().detach().numpy().reshape(-1,1))
-    y_pred[0,0] = 0
+
+    with torch.no_grad():
+        y_pred = model(x, nspt).to(device)
+
+    # Debugging: print shape before transforming
+    print("y_pred shape before reshape:", y_pred.shape)
+
+    # Reshape sesuai format scaler_y
+    y_pred = y_pred.cpu().detach().numpy()
+
+    # Cek jika ada NaN atau Inf sebelum transformasi
+    if np.isnan(y_pred).any() or np.isinf(y_pred).any():
+        st.error("Prediction contains NaN or Inf values. Check model output.")
+        return None
+
+    # Pastikan bentuk y_pred sesuai untuk inverse_transform
+    if len(y_pred.shape) == 3:
+        y_pred = y_pred.reshape(-1, 1)
+
+    print("y_pred shape after reshape:", y_pred.shape)
+
+    try:
+        y_pred = scaler_y.inverse_transform(y_pred)
+    except ValueError as e:
+        st.error(f"Error in inverse_transform: {e}")
+        return None
+
+    y_pred[0, 0] = 0  # Set elemen pertama jadi 0 (mungkin perlu dikaji lebih lanjut)
     return y_pred
+
 
 def plot_prediction(n_ei, prediction):
     ei = generate_ei(n_ei)
