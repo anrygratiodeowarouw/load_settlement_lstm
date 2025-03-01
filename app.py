@@ -13,6 +13,7 @@ st.title("Prediction of Load-settlement Curve of Pile Foundation using Deep Lear
 #membuat subheader
 st.subheader("Thesis Project by: Anry Gratio Deo Warouw (25021069) Bandung Institute of Technology")
 st.markdown("Selamat datang semua :partying_face:, saya Deo mahasiswa S2 Geoteknik sedang mengembangkan model AI :smile: dengan tujuan agar dapat digunakan untuk memprediksi Load-Settlement Tiang Bor di DKI Jakarta :satisfied:")
+st.markwon("HY ANGGI!")
 
 st.image('header.png')
 
