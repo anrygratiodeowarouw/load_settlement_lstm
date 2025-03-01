@@ -150,28 +150,34 @@ def predict_qi(d, l, col, n_ei, nspt_df, model):
     X_transformed = scaler_x.transform(X)
     nspt_transformed = scaler_nspt.transform(np.array(nspt).reshape(-1, 3))
 
-    x = torch.tensor(X_transformed).float().to(device).unsqueeze(0)
-    nspt = torch.tensor(nspt_transformed.reshape(3, -1)).float().to(device).unsqueeze(0)
+    x = torch.tensor(X_transformed, dtype=torch.float32).to(device).unsqueeze(0)
+    nspt = torch.tensor(nspt_transformed.reshape(3, -1), dtype=torch.float32).to(device).unsqueeze(0)
 
     with torch.no_grad():
-        y_pred = model(x, nspt).to(device)
+        y_pred = model(x, nspt)
 
-    # Debugging: print shape before transforming
-    print("y_pred shape before reshape:", y_pred.shape)
+    # Debugging: cek apakah y_pred valid
+    if y_pred is None:
+        st.error("Model returned None. Check model inference.")
+        return None
 
-    # Reshape sesuai format scaler_y
+    if not isinstance(y_pred, torch.Tensor):
+        st.error(f"Unexpected type for y_pred: {type(y_pred)}")
+        return None
+
+    print("y_pred tensor shape:", y_pred.shape)  # Debugging output
+
+    # Konversi ke NumPy dengan pengecekan NaN atau Inf
     y_pred = y_pred.cpu().detach().numpy()
 
-    # Cek jika ada NaN atau Inf sebelum transformasi
     if np.isnan(y_pred).any() or np.isinf(y_pred).any():
         st.error("Prediction contains NaN or Inf values. Check model output.")
         return None
 
-    # Pastikan bentuk y_pred sesuai untuk inverse_transform
     if len(y_pred.shape) == 3:
         y_pred = y_pred.reshape(-1, 1)
 
-    print("y_pred shape after reshape:", y_pred.shape)
+    print("y_pred shape after reshape:", y_pred.shape)  # Debugging output
 
     try:
         y_pred = scaler_y.inverse_transform(y_pred)
@@ -179,7 +185,7 @@ def predict_qi(d, l, col, n_ei, nspt_df, model):
         st.error(f"Error in inverse_transform: {e}")
         return None
 
-    y_pred[0, 0] = 0  # Set elemen pertama jadi 0 (mungkin perlu dikaji lebih lanjut)
+    y_pred[0, 0] = 0  # Set elemen pertama jadi 0
     return y_pred
 
 
